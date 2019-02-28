@@ -77,6 +77,6 @@ if __name__ == "__main__":
         else:
             output_file = input_file
 
-        nr_photos, problem = load_file(input_file)
-        solution = solver.solve(problem)
+        nr_photos, photos = load_file(input_file)
+        solution = solver.solve(photos)
         export(output_file, solution)
