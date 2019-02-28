@@ -17,9 +17,10 @@ def export(name, data):
     with open('output/' + filename, 'w') as output_file:
         logger.info('Writing result to: %s', output_file.name)
 
+        output_file.write(str(len(data)) + '\n')
         for line in data:
             logger.info(line)
-            output_line = "{} {} \n".format(line["direction"], line["tags"])
+            output_line = " ".join(str(x) for x in line) + '\n'
             output_file.write(output_line)
 
 
