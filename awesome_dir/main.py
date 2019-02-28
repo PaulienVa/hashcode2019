@@ -1,5 +1,6 @@
 import argparse
 import logging
+import importlib
 from datetime import datetime
 
 logger = logging.getLogger('main.py')
@@ -22,6 +23,7 @@ def export(name, data):
 
 def load_file(filename):
     result = {}
+    filename = filename + '.in'
 
     with open('input/' + filename) as input_file:
         logger.info('Writing result to: %s', input_file.name)
@@ -49,21 +51,31 @@ def setup_logging(debug):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Solve awesome HashCode 2019')
-    parser.add_argument('--input', metavar='N', type=str, required=True,
-                        dest="input_file_name", help='input file')
-    parser.add_argument('--output', type=str, dest="output_file_name",
-                        required=True, help='output file')
+    parser.add_argument('input', type=str, nargs='+', help='input file')
+    parser.add_argument('--output', type=str, dest="output",
+                        help='to tag the output file')
+    parser.add_argument('--solver', required=True,
+                        help='select a solver to use')
     parser.add_argument('--debug', action='store_true',
                         help='add for debug logs')
     args = parser.parse_args()
 
     setup_logging(args.debug)
 
-    input_file_name = args.input_file_name
-    output_file_name = args.output_file_name
+    try:
+        solver = importlib.import_module('.'.join(["solvers", args.solver]))
+    except ImportError:
+        logger.error("solver '%s' not available. "
+                     "Create a solver in file 'solvers/%s.py'.",
+                     args.solver, args.solver)
+        exit(1)
 
-    problem = load_file(input_file_name + '.in')
+    for input_file in args.input:
+        if args.output:
+            output_file = '{}_{}'.format(args.output, input_file)
+        else:
+            output_file = input_file
 
-    solution = solve(problem)
-
-    export(output_file_name, solution)
+        problem = load_file(input_file)
+        solution = solver.solve(problem)
+        export(output_file, solution)
