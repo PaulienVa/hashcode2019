@@ -18,27 +18,28 @@ def export(name, data):
         logger.info('Writing result to: %s', output_file.name)
 
         for line in data:
-            output_file.write(line)
+            logger.info(line)
+            output_line = "{} {} \n".format(line["direction"], line["tags"])
+            output_file.write(output_line)
 
 
 def load_file(filename):
-    result = {}
-    filename = filename + '.in'
+    results = []
+    filename = filename + '.txt'
 
     with open('input/' + filename) as input_file:
         logger.info('Writing result to: %s', input_file.name)
         lines = input_file.read().splitlines()
 
-        [R, C, F, N, B, T] = lines[0].split(' ')
+        nr = lines[0]
+        photos = lines[1:]
 
-        result["rows"] = R
-        result["columns"] = C
-        result["vehicles"] = F
-        result["ride_amount"] = int(N)
-        result["bonus"] = B
-        result["steps"] = T
+        for line in photos:
+            els = line.split(' ')
+            result = {"nr": photos.index(line),  "direction": els[0], "nTags": els[1], "tags": els[2:]}
+            results.append(result)
 
-    return result
+    return nr, results
 
 
 def setup_logging(debug):
@@ -76,6 +77,6 @@ if __name__ == "__main__":
         else:
             output_file = input_file
 
-        problem = load_file(input_file)
+        nr_photos, problem = load_file(input_file)
         solution = solver.solve(problem)
         export(output_file, solution)
