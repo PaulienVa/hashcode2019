@@ -1,6 +1,3 @@
-/.idea
-*.iml
+.ropeproject/
 
-/venv
-/venv1
-/awesome_dir/output/
+*/output/
