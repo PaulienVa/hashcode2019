@@ -1,5 +1,8 @@
 import argparse
+import logging
 from datetime import datetime
+
+logger = logging.getLogger('main.py')
 
 
 def solve(problem):
@@ -8,20 +11,21 @@ def solve(problem):
 
 def export(name, data):
     timestamp = datetime.now().strftime("%Y%m%d-%H%M")
-    output_dir = './output/'
     filename = timestamp + '_' + name + '.txt'
 
-    with open(output_dir + filename, 'w') as file:
+    with open('output/' + filename, 'w') as output_file:
+        logger.info('Writing result to: %s', output_file.name)
 
         for line in data:
-            file.write(line)
+            output_file.write(line)
 
 
 def load_file(filename):
     result = {}
 
-    with open('input/'+ filename) as f:
-        lines = f.read().splitlines()
+    with open('input/' + filename) as input_file:
+        logger.info('Writing result to: %s', input_file.name)
+        lines = input_file.read().splitlines()
 
         [R, C, F, N, B, T] = lines[0].split(' ')
 
@@ -35,26 +39,31 @@ def load_file(filename):
     return result
 
 
+def setup_logging(debug):
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(handlers=[logging.StreamHandler()])
+
+
 if __name__ == "__main__":
-
-    outputFile = ''
-
     parser = argparse.ArgumentParser(description='Solve awesome HashCode 2019')
-    parser.add_argument('--input', metavar='N', type=str, dest="inputFile",
-                        help='input file(s)')
-    parser.add_argument('--output', type=str, dest="outputFile",
-                        help='output file(s)')
-
+    parser.add_argument('--input', metavar='N', type=str, required=True,
+                        dest="input_file_name", help='input file')
+    parser.add_argument('--output', type=str, dest="output_file_name",
+                        required=True, help='output file')
+    parser.add_argument('--debug', action='store_true',
+                        help='add for debug logs')
     args = parser.parse_args()
-    inputFileName = args.inputFile
-    outputFileName = args.outputFile
-    print('Reading inputFile: ' + inputFileName)
 
+    setup_logging(args.debug)
 
-    problem = load_file(inputFileName + '.in')
+    input_file_name = args.input_file_name
+    output_file_name = args.output_file_name
+
+    problem = load_file(input_file_name + '.in')
 
     solution = solve(problem)
 
-    export(outputFileName, solution)
-
-    print('Writing result to outputFile: ' + outputFileName)
+    export(output_file_name, solution)
