@@ -1,3 +1,3 @@
 To run it:
 
-python main.py example
+python main.py example --solver basic
