@@ -1,7 +1,7 @@
 import argparse
 import logging
+import importlib
 from datetime import datetime
-from solvers import basic
 
 logger = logging.getLogger('main.py')
 
@@ -54,11 +54,21 @@ if __name__ == "__main__":
     parser.add_argument('input', type=str, nargs='+', help='input file')
     parser.add_argument('--output', type=str, dest="output",
                         help='to tag the output file')
+    parser.add_argument('--solver', required=True,
+                        help='select a solver to use')
     parser.add_argument('--debug', action='store_true',
                         help='add for debug logs')
     args = parser.parse_args()
 
     setup_logging(args.debug)
+
+    try:
+        solver = importlib.import_module('.'.join(["solvers", args.solver]))
+    except ImportError:
+        logger.error("solver '%s' not available. "
+                     "Create a solver in file 'solvers/%s.py'.",
+                     args.solver, args.solver)
+        exit(1)
 
     for input_file in args.input:
         if args.output:
@@ -67,5 +77,5 @@ if __name__ == "__main__":
             output_file = input_file
 
         problem = load_file(input_file)
-        solution = basic.solve(problem)
+        solution = solver.solve(problem)
         export(output_file, solution)
