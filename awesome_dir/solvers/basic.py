@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger('solver/basic.py')
 
+
 # [{'nr': 0, 'nTags': '3', 'direction': 'H', 'tags': ['cat', 'beach', 'sun']}]
 
 def solve(photos):
@@ -13,15 +14,19 @@ def solve(photos):
     sorted_hor = sorted(hor, key=lambda x: x["nTags"])
     sorted_vert = sorted(vert, key=lambda x: x["nTags"])
 
-
     slides = []
 
     logger.debug('Found some slides...')
 
     return slides
 
+
+def getAmountOfSlides(sorted_hor, sorted_vert):
+    return len(sorted_hor) + len(sorted_vert) / 2
+
+
 def getUniqueTagsOfPhotos(photoA, photoB):
-    return photoA["nTags"] + photoB["nTags"] - getSameTagsOfPhotos(photoA, photoB)
+    return photoA["nTags"] + photoB["nTags"] - 2 * getSameTagsOfPhotos(photoA, photoB)
 
 
 def getSameTagsOfPhotos(photoA, photoB):
