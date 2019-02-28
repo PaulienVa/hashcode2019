@@ -20,8 +20,11 @@ def solve(photos):
 
     return slides
 
+def getUniqueTagsOfPhotos(photoA, photoB):
+    return photoA["nTags"] + photoB["nTags"] - getSameTagsOfPhotos(photoA, photoB)
 
-def compareThem(photoA, photoB):
+
+def getSameTagsOfPhotos(photoA, photoB):
     sameTags = 0
     for photoAsTag in photoA["tags"]:
         for photoBsTag in photoB["tags"]:
